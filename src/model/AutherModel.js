@@ -1,4 +1,5 @@
 const mongoose =require('mongoose');
+const { unique } = require('underscore');
 
 const autherSchema = new mongoose.Schema({
     fname:{
@@ -9,10 +10,24 @@ const autherSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    
+    title:{
+        type:String,
+        enum:[Mr,Mrs,Miss],
+        required:true
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true
+    }
+
 
 
    
 },{timestamps:true});  
 
-module.exports=mongoose.model("book",autherSchema)
+module.exports=mongoose.model("auther",autherSchema)
