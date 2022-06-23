@@ -86,7 +86,7 @@ const loginAuthor = async function (req, res) {
     let {email,password}=data //extract params
 
 
-    if(!isValidUserInput(data)){
+    if(!isValidRequestBody(data)){
         return res.status(400).send({status:false, msg : "Invalid request parameters.Please provide login details"})
     }
 
@@ -109,13 +109,12 @@ const loginAuthor = async function (req, res) {
 let token = jwt.sign(
     {
       authorId: author._id.toString(),
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000)+10*60*60
+      project:"blogging-Site"
     },
     'author-blog'
   );
   res.setHeader("x-api-key", token);
-  return res.status(200).send({ status: true, data: token, msg: "Author successfully logged in" });
+  return res.status(200).send({ status: true,  msg: "Author successfully logged in",data:token });
 }
 catch (err){
     return res.status(500).send({ msg: "Error", error: err.message })

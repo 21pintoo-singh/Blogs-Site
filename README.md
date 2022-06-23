@@ -67,7 +67,7 @@ example of a query url: blogs?filtername=filtervalue&f2=fv2
 - Add an authorisation implementation for the JWT token that validates the token before every protected endpoint is called. If the validation fails, return a suitable error message with a corresponding HTTP status code
 - Protected routes are create a blog, edit a blog, get the list of blogs, delete a blog(s)
 - Set the token, once validated, in the request - `x-api-key`
-- Use a middleware for authentication purpose.
+- Use a middleware for authentication purpose.  
 
 ### Authorisation
 - Make sure that only the owner of the blogs is able to edit or delete the blog.
@@ -129,3 +129,6 @@ Refer below sample
 #### Refer https://jsonplaceholder.typicode.com/guide/ for some fake blogs data.
 
 #### Note: Create a group database and use the same database in connection string by replacing `groupXDatabase
+
+
+

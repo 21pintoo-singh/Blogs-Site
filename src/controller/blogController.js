@@ -130,7 +130,7 @@ const updateblog = async function (req, res) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 }
- //  $
+ 
 
 
 
@@ -175,7 +175,7 @@ let deleteBlogByquery = async function (req, res) {
         }
 
         if (!isValidObjectId(authorId)) {
-            return res.status(400).send({ sttaus: false, msg: ` please enter a valid object Id` });
+            return res.status(400).send({ sttaus: false, msg: ` please enter a authorid or valid author id ` });
         }
 
 
