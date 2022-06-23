@@ -76,8 +76,9 @@ const getblog = async function (req, res) {
         let { authorId, category, subcategory, tags } = data
 
         let filter = { isDeleted: false, isPublished: true }
-        if(isValidObjectId(data)){
-
+        if(!isValidObjectId(data)){
+           res.status(400).send({status:false,msg:"please query any one"})
+           return;
         }
 
         if (isValid(authorId) && isValidRequestBody(authorId)) {
@@ -209,6 +210,7 @@ const deleteById = async function (req, res) {
         let blogId = req.params.blogId
         if(!blogId){
             res.status(400).send({status:false,msg:"please enter blogid in param"})
+            return;
         }
 
         let blog = await blogModel.findOne({ $and: [{ _id: blogId }, { isDeleted: false }] })
@@ -234,7 +236,10 @@ let deleteBlogByquery = async function (req, res) {
 
     try {
         let data = req.query
-
+        if(!isValidObjectId(data)){
+            res.status(400).send({status:false,msg:"please query any one"})
+            return;
+        }
         let { authorId, category, subcategory, tags } = data
 
         let filter = { isDeleted: false, isPublished: true }
@@ -247,19 +252,42 @@ let deleteBlogByquery = async function (req, res) {
             return res.status(400).send({ sttaus: false, msg: ` please enter a authorid or valid author id ` });
         }
 
-
-        if (isValid(authorId)) {                                                                 //&& isValidRequestBody(authorId)
+        if (isValid(authorId) && isValidRequestBody(authorId)) {
+            let author = await blogModel.find({authorId:authorId});
+            if (author.length==0) {
+                res.status(400).send({ status: false, msg: "no data found with this author id " })
+                return;
+            }
             filter["authorId"] = authorId
         }
+
         if (isValid(category)) {
+            let cat = await blogModel.find({category:category});
+            if (cat.length==0) {
+                res.status(400).send({ status: false, msg: "category is not matching with any blog category" })
+                return;
+            }
             filter["category"] = category
         }
+
         if (isValid(subcategory)) {
+            let subcat = await blogModel.find({subcategory:subcategory});
+            if (subcat.length==0) {
+                res.status(400).send({ status: false, msg: "subcategory is not matching with any one of blog subcategory" })
+                return;
+            }
             filter["subcategory"] = subcategory
         }
+
         if (isValid(tags)) {
+            let tag = await blogModel.find({tags:tags});
+            if (tag.length==0) {
+                res.status(400).send({ status: false, msg: "tag is not matching with anyone of blog tag" })
+                return;
+            }
             filter["tags"] = tags
         }
+       
 
 
         let blog = await blogModel.find(filter)
