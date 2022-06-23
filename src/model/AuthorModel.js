@@ -1,6 +1,6 @@
 const mongoose =require('mongoose');
 
-const { isEmail } =require( 'validator');
+
 
 const authorSchema = new mongoose.Schema({
     fname:{
@@ -22,7 +22,7 @@ const authorSchema = new mongoose.Schema({
         unique : true,
         lowercase:true,
         trim:true,
-        validate:[ isEmail, 'invalid email' ]
+       
     },
     password:{
         type:String,
