@@ -2,7 +2,7 @@ const mongoose =require('mongoose');
 
 const { isEmail } =require( 'validator');
 
-const autherSchema = new mongoose.Schema({
+const authorSchema = new mongoose.Schema({
     fname:{
         type:String,
         required:true
@@ -20,11 +20,14 @@ const autherSchema = new mongoose.Schema({
         type:String,
         required:true,
         unique : true,
+        lowercase:true,
+        trim:true,
         validate:[ isEmail, 'invalid email' ]
     },
     password:{
         type:String,
-        required:true
+        required:true,
+        trim:true
     }
 
 
@@ -32,4 +35,4 @@ const autherSchema = new mongoose.Schema({
    
 },{timestamps:true});  
 
-module.exports=mongoose.model("author",autherSchema)
+module.exports=mongoose.model("author",authorSchema)
