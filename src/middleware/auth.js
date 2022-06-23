@@ -16,7 +16,7 @@ const authentication = async function (req, res, next) {
         // let author = req.body.authorId;
         //  let userLoggedIn = decodedToken.authorId
     //    if( author== userLoggedIn){
-      res.headers["x-api-key"]=decodedToken.authorId;
+     
         next()
        }
        
