@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 
+
+//----- authentication process to validate the person ----------------------------------------//
 const authentication = async function (req, res, next) {
     try {
         let token = (req.headers["x-api-key"])
@@ -8,16 +10,12 @@ const authentication = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "Token must be present", });
         }
 
-        let decodedToken = jwt.verify(token, "author-blog")
+        let decodedToken = jwt.verify(token, "author-blog")      // decoding token 
 
         if (!decodedToken) {
             return res.status(400).send({ status: false, msg: "Token is invalid" });
         }
-        // let author = req.body.authorId;
-        //  let userLoggedIn = decodedToken.authorId
-    //    if( author== userLoggedIn){
-     
-        next()
+             next()
        }
        
     
@@ -27,12 +25,13 @@ const authentication = async function (req, res, next) {
 
 }
 
+//-------------------------authorization process to authorize the person -------------------------------//
 const authorization = async function (req, res, next) {
     try {
 
         let id = req.query.authorId
         let token = (req.headers["x-api-key"])
-        let decodedToken = jwt.verify(token, "author-blog")
+        let decodedToken = jwt.verify(token, "author-blog")           // verifying the token 
 
         if (!id)
             res.status(401).send({ status: false, msg: "authorId must be present" });
@@ -42,7 +41,7 @@ const authorization = async function (req, res, next) {
         console.log(userLoggedIn)
         let userToBeModified = id;
         console.log(userToBeModified)
-        if (userLoggedIn == userToBeModified) {
+        if (userLoggedIn == userToBeModified) {                    // checking the person is authorized or not 
             next()
         }
         else {
