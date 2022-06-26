@@ -29,9 +29,6 @@ const authorSchema = new mongoose.Schema({
         required:true,
         trim:true
     }
-
-
-
    
 },{timestamps:true});  
 

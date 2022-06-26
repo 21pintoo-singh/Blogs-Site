@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const blogModel = require("../model/blogModel");
 
 
 //----- authentication process to validate the person ----------------------------------------//
@@ -20,7 +21,7 @@ const authentication = async function (req, res, next) {
        
     
     catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
+      return  res.status(500).send({ msg: "Error", error: err.message })
     }
 
 }
@@ -29,28 +30,38 @@ const authentication = async function (req, res, next) {
 const authorization = async function (req, res, next) {
     try {
 
-        let id = req.query.authorId
+        let blogId = req.params.blogId
+        // let authorIdQ=req.query.authorId
         let token = (req.headers["x-api-key"])
         let decodedToken = jwt.verify(token, "author-blog")           // verifying the token 
+        let tokenauthorId = decodedToken.authorId;
 
-        if (!id)
-            res.status(401).send({ status: false, msg: "authorId must be present" });
+        // console.log(tokenauthorId)
 
-
-        let userLoggedIn = decodedToken.authorId;
-        console.log(userLoggedIn)
-        let userToBeModified = id;
-        console.log(userToBeModified)
-        if (userLoggedIn == userToBeModified) {                    // checking the person is authorized or not 
-            next()
+        if (blogId){
+            let autherId1=await blogModel.findOne({_id:blogId,authorId:tokenauthorId})
+            //  console.log(autherId1)
+             if(autherId1==null){
+           return res.status(401).send({ status: false, msg: "you are not authorize" });}
+           else{
+                next()
+           }
+           
         }
-        else {
-            res.status(401).send({ status: false, msg: "author logged in is not allowed to modify or access the author data" });
-        }
+        // console.log(userLoggedIn)
+ 
+            // let authorIdData = await blogModel.find({authorId:authorId})
+     
+//     //  console.log(authorIdData)
+//     if(authorIdData.length==0){
+//     return res.status(401).send({ status: false, msg: "author logged in is not allowed to modify or access the author data" });
+//   }
+  next()
+      
     }
 
     catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
+      return  res.status(500).send({ msg: "Error", error: err.message })
     }
 
 }
