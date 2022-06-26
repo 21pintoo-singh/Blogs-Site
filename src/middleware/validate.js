@@ -46,16 +46,6 @@ const validatecreate = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "Invalid request parameters. Please provide author details" })
         }
         //here checking the data come from request body should not be empty
-
-        /*---------------------------------------------second method ---------------------------------------------------*/
-        // if(!isValid(fname))
-        // return res.status(400).send({status:false, msg : "First name is required"})
-
-        // if(!isValid(lname))
-        // return res.status(400).send({status:false, msg : "Last name is required"})
-        /*---------------------------------------------------------------------------------------------------------------*/
-
-
         if (!nameregex.test(fname)) {
             return res.status(400).send({ status: false, msg: "please enter alphabets only" })
         }
@@ -86,11 +76,6 @@ const validatecreate = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "E-mail should be a valid e-mail address" })
         }
         // validating the email with regex
-
-        /*-------------------------------------------------------------------------------------------------*/
-        // if(!isValid(password))
-        // return res.status(400).send({status:false, msg:"password is not exist"})
-        /*--------------------------------------------------------------------------------------------------*/
 
         if (!(passwordregex.test(password))) {
             return res.status(400).send({ status: false, msg: "password should have atleast One digit, one upper case , one lower case ,one special character and its b/w 8 to 20 characters" })
@@ -159,8 +144,8 @@ const validateblog = async function (req, res, next) {
     // body should not be empty or not be null and undefined 
 
     // author id should be valid 
-    if (!isValid(title)) {
-        return res.status(400).send({ status: false, msg: "Title is required" })
+    if (!isValid(tags)) {
+        return res.status(400).send({ status: false, msg: "Tags is required" })
     }
     // title should be  valid
 
@@ -190,10 +175,10 @@ const validateByQuery = async function (req, res, next) {
 
         let filter = { isDeleted: false, isPublished: true }
 
-        if (!isValidRequestBody(data)) {
-            res.status(400).send({ status: false, msg: "please query any one" })          //------its wrong without filter show isdeleted false
-            return;
-        }
+        // if (!isValidRequestBody(data)) {
+        //     res.status(400).send({ status: false, msg: "please query any one" })          //------its wrong without filter show isdeleted false
+        //     return;
+        // }
         // validating the body with upper defined function
 
         if (isValid(authorId)) {
@@ -235,16 +220,12 @@ const validateByQuery = async function (req, res, next) {
             }
             filter["tags"] = tags
         }
-
-
         next()
     }
     catch (err) {
         return res.status(500).send({ msg: "Error", error: err.message })
     }
 }
-
-
 module.exports.validatecreate = validatecreate
 module.exports.validateLogin = validateLogin
 module.exports.validateblog = validateblog

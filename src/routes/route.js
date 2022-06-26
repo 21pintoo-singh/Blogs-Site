@@ -12,7 +12,7 @@ router.post('/blogs', middlewareAuth.authentication,middlewareValidate.validateb
 
 router.get('/blogs',middlewareAuth.authentication,middlewareAuth.authorization, middlewareValidate.validateByQuery, BlogController.getblog) //get blog
 
-router.put('/blogs/:blogId', middlewareAuth.authentication, middlewareAuth.authorization, BlogController.updateblog)  // update blog
+router.put('/blogs/:blogId',middlewareAuth.authentication,middlewareAuth.authorization,  BlogController.updateblog)  // update blog
 
 router.delete('/blogs/:blogId', middlewareAuth.authentication, middlewareAuth.authorization, BlogController.deleteById) //delete blog by id
 

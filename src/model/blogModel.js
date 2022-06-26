@@ -31,6 +31,9 @@ const blogSchema = new mongoose.Schema({
      subcategory: [{ 
           type: String
      }],
+
+     deletedAt:Date,
+
      publishedAt :{
           type : Date, 
           default: Date.now()
