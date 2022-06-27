@@ -45,14 +45,15 @@ const getblog = async function (req, res) {
 
 //--------------------API to update the blog whom user want to update-------------------------------------//
 const updateblog = async function (req, res) {
-         console.log("hii")
+    console.log("hii")
     try {
         let blogId = req.params.blogId;
         let data = req.body;
 
 
-        if (Object.keys(data).length == 0){
-            return res.status(400).send({ status: false, msg: "Body is required" });}
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, msg: "Body is required" });
+        }
         // data should not be empty
 
         let blogData = await blogModel.findOne({ _id: blogId, isDeleted: false });
@@ -78,7 +79,7 @@ const updateblog = async function (req, res) {
         blogData.isPublished = true;
         blogData.save();                        // saving every updation
 
-        let datasave = await blogModel.findOneAndUpdate({ _id: blogId }, { blogData },{ new:true })
+        let datasave = await blogModel.findOneAndUpdate({ _id: blogId }, { blogData }, { new: true })
         return res.status(200).send({ status: true, data: datasave });
 
     } catch (error) {
@@ -94,7 +95,7 @@ const isValidRequestBody = function (request) {
 const deleteById = async function (req, res) {
 
     try {
-      
+
         let blogId = req.params.blogId
 
 
@@ -102,7 +103,7 @@ const deleteById = async function (req, res) {
             res.status(400).send({ status: false, msg: "please enter blogid in param" })
             return;
         }
-        if(!isValidObjectId(blogId)){
+        if (!isValidObjectId(blogId)) {
             return res.status(400).send("please enter valid blog id")
         }
         let blog = await blogModel.findOne({ $and: [{ _id: blogId }, { isDeleted: false }] })
@@ -111,7 +112,7 @@ const deleteById = async function (req, res) {
             return res.status(404).send({ status: false, msg: "No such blog exist or the blog is deleted" })
         }
 
-        let afterDeletion = await blogModel.findOneAndUpdate({ _id: blogId }, { $set: { isDeleted: true,deletedAt: new Date() } }, { new: true })
+        let afterDeletion = await blogModel.findOneAndUpdate({ _id: blogId }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
 
         return res.status(200).send({ status: true, msg: "Blog deleted succesfully", data: afterDeletion })
     }
@@ -124,35 +125,68 @@ const deleteById = async function (req, res) {
 
 
 let deleteBlogByquery = async function (req, res) {
+    //     try {
+
+    //         let token = (req.headers["x-api-key"])
+    //         let decodedToken = jwt.verify(token, "author-blog")           // verifying the token 
+    //         let tokenauthorId = decodedToken.authorId;
+    //         console.log(tokenauthorId)
+
+    //         let filter = { isDeleted: false, isPublished: true, authorId: tokenauthorId }
+
+    //         let data = req.query
+    //         if (!isValidRequestBody(data)) {
+    //        return  res.status(400).send({ status: false, msg: "please query any one" });
+    //      }
+    //        filter ={filter,...data}
+    //         console.log(filter)
+    //         let blog = await blogModel.find(filter)
+    //         console.log(blog)
+
+    //         if (blog && blog.length == 0) {
+    //             return res.status(404).send({ status: false, msg: "No such document exist or it may be deleted" })
+    //         }
+    //         // if blog is not  found then send status false
+
+    //         let deletedBlog = await blogModel.updateMany({ _id: blog }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
+    //         return res.status(200).send({ status: true, msg: "Blog deleted successfully", data: deletedBlog })
+
+    //     }  // if blog found then mark isdeleted value to true and set the date of deleted at
+    //     catch (err) {
+    //         return res.status(500).send({ msg: "Error", error: err.message })
+    //     }
+    // }
     try {
-      
-        let token = (req.headers["x-api-key"])
-        let decodedToken = jwt.verify(token, "author-blog")           // verifying the token 
-        let tokenauthorId = decodedToken.authorId;
-        console.log(tokenauthorId)
+        let query = req.query
+        // console.log(query)
+        let data = Object.keys(query)
+        if (!data.length) return res.status(400).send({ status: false, msg: "Data can not be empty" });
+        let blog = await blogModel.find(query).select({ authorId: 1, _id: 1 })//
+        // console.log(blog)
+        if (!blog) return res.status(404).send({ status: false, msg: "Data already deleted" })
 
-        let filter = { isDeleted: false, isPublished: true, authorId: tokenauthorId }
-      
-        let data = req.query
-        if (!isValidRequestBody(data)) {
-       return  res.status(400).send({ status: false, msg: "please query any one" });
-     }
-       filter ={filter,...data}
-        console.log(filter)
-        let blog = await blogModel.find(filter)
-        console.log(blog)
+        let token = req.headers["x-api-key"]
+        if (!token) return res.status(401).send({ status: false, msg: "token is not available" })
 
-        if (blog && blog.length == 0) {
-            return res.status(404).send({ status: false, msg: "No such document exist or it may be deleted" })
-        }
-        // if blog is not  found then send status false
+        let decodedToken = jwt.verify(token, "author-blog")
+        // console.log(decodedToken)
+        if (!decodedToken) return res.status(403).send({ status: false, msg: "invalid token" })
 
-        let deletedBlog = await blogModel.updateMany({ _id: blog }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
-        return res.status(200).send({ status: true, msg: "Blog deleted successfully", data: deletedBlog })
-
-    }  // if blog found then mark isdeleted value to true and set the date of deleted at
+        let authorisedId = decodedToken.authorId
+        // console.log(authorisedId)
+        let auth = blog.find(e => e.authorId == authorisedId)//here we are finding out author id which is related to query params and whose value is equal to our decodedToken. if we will find the value we will get authorid else undefined
+        console.log(auth)
+        if (auth === undefined) return res.status(404).send({ msg: "you are not allowed to delete this blog" })
+        // console.log(req.token)//it will give us author id which is in decoded token and it will give us those author id only which is authorised to update or delete    
+        let deletBlog = await blogModel.findByIdAndUpdate(
+            { _id: auth._id },
+            { $set: { isDeleted: true, isDeletedAt: new Date() } },
+            { new: true })
+        console.log(deletBlog)
+        return res.status(200).send({ status: true, msg: deletBlog })
+    }
     catch (err) {
-        return res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ msg: err.message })
     }
 }
 
