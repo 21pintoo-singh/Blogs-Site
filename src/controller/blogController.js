@@ -125,24 +125,29 @@ const deleteById = async function (req, res) {
 
 let deleteBlogByquery = async function (req, res) {
     try {
-        let data = req.query
-           if (!isValidRequestBody(data)) {
-          return  res.status(400).send({ status: false, msg: "please query any one" });
-        }
-
+      
         let token = (req.headers["x-api-key"])
         let decodedToken = jwt.verify(token, "author-blog")           // verifying the token 
         let tokenauthorId = decodedToken.authorId;
-        let filter = { isDeleted: false, isPublished: true, authorId: tokenauthorId, ...data }
+        console.log(tokenauthorId)
 
+        let filter = { isDeleted: false, isPublished: true, authorId: tokenauthorId }
+      
+        let data = req.query
+        if (!isValidRequestBody(data)) {
+       return  res.status(400).send({ status: false, msg: "please query any one" });
+     }
+       filter ={filter,...data}
+        console.log(filter)
         let blog = await blogModel.find(filter)
+        console.log(blog)
 
         if (blog && blog.length == 0) {
             return res.status(404).send({ status: false, msg: "No such document exist or it may be deleted" })
         }
         // if blog is not  found then send status false
 
-        let deletedBlog = await blogModel.updateMany({ _id: { $in: blog } }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
+        let deletedBlog = await blogModel.updateMany({ _id: blog }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
         return res.status(200).send({ status: true, msg: "Blog deleted successfully", data: deletedBlog })
 
     }  // if blog found then mark isdeleted value to true and set the date of deleted at
