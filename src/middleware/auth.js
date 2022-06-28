@@ -46,9 +46,6 @@ const authorization = async function (req, res, next) {
             if (autherId1 == null) {
                 return res.status(401).send({ status: false, msg: "you are not authorize" });
             }
-            // else {
-            //     next()
-            // }
 
         }
         next()

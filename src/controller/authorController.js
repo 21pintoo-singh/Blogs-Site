@@ -5,13 +5,11 @@ const createAuthor = async function (req, res) {
 
     try {
         let data = req.body
-        
-
         let authorCreated = await authorModel.create(data)
         return res.status(201).send({ status: true, msg: "Author created successfully", data: authorCreated })
     }
     catch (err) {
-        return res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ status:false, message: err.message })
     }
 }
 
@@ -32,10 +30,10 @@ const loginAuthor = async function (req, res) {
             'author-blog'
         );
         res.setHeader("x-api-key", token);
-        return res.status(200).send({ status: true, msg: "Author successfully logged in", data: token });
+        return res.status(200).send({ status: true, message: "Author successfully logged in", data: token });
     }
     catch (err) {
-        return res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ status:false, message: err.message })
     }
 };
 
