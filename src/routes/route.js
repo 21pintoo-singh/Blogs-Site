@@ -22,6 +22,4 @@ router.post('/login',middlewareValidate.validateLogin, AuthorController.loginAut
 
 
 
-
-
 module.exports = router;

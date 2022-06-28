@@ -18,7 +18,7 @@ const createBlog = async function (req, res) {
     }
 
     catch (err) {
-        res.status(500).send({ status:false, message: err.message })
+        res.status(500).send({ status: false, message: err.message })
     }
 }
 
@@ -39,7 +39,7 @@ const getblog = async function (req, res) {
         }
     }
     catch (err) {
-        return res.status(500).send({ status:false, message: err.message })
+        return res.status(500).send({ status: false, message: err.message })
     }
 }
 
@@ -156,32 +156,37 @@ let deleteBlogByquery = async function (req, res) {
     //     }
     // }
     try {
-        let query = req.query
-        // console.log(query)
+        let q = req.query
+        let query = { isDeleted: false, ...q }
+        console.log(query)
         let data = Object.keys(query)
         if (!data.length) return res.status(400).send({ status: false, msg: "Data can not be empty" });
         let blogs = await blogModel.find(query)//
-        // console.log(blog)
+        console.log(blogs)
+        if (blogs.length == 0) {
+            return res.send({ msg: "data deleted" })
+        }
+
         if (!blogs) return res.status(404).send({ status: false, msg: "Data already deleted" })
 
         let token = req.headers["x-api-key"]
         if (!token) return res.status(401).send({ status: false, msg: "token is not available" })
 
         let decodedToken = jwt.verify(token, "author-blog")
-        // console.log(decodedToken)
+        console.log(decodedToken)
         if (!decodedToken) return res.status(403).send({ status: false, msg: "invalid token" })
 
         let authorisedId = decodedToken.authorId
-        // console.log(authorisedId)
-        let auth = blogs.map(blog =>{if( blog.authorId.toString() === authorisedId)
-            return blog._id
+        console.log(authorisedId)
+        let auth = blogs.map(blog => {
+            if (blog.authorId.toString() === authorisedId)
+                return blog._id
         })
-            //here we are finding out author id which is related to query params and whose value is equal to our decodedToken. if we will find the value we will get authorid else undefined
+        //here we are finding out author id which is related to query params and whose value is equal to our decodedToken. if we will find the value we will get authorid else undefined
         console.log(auth)
         if (auth === undefined) return res.status(404).send({ msg: "you are not allowed to delete this blog" })
         // console.log(req.token)//it will give us author id which is in decoded token and it will give us those author id only which is authorised to update or delete    
-        let deletBlog = await blogModel.updateMany(
-            { _id: auth },
+        let deletBlog = await blogModel.updateMany( { _id: auth },
             { $set: { isDeleted: true, isDeletedAt: new Date() } },
             { new: true })
         console.log(deletBlog)
