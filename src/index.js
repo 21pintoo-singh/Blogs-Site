@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-mongoose.connect("mongodb+srv://shubhamsingh:ZqIuucMGucAIGAIa@cluster0.3t74x.mongodb.net/shubhamproject1try-db?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://21pintoo-singh:S0Uw8LhNlYRyHfiq@cluster1.k5nsu.mongodb.net/BlogSiteFinal", {
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))
@@ -18,6 +18,6 @@ mongoose.connect("mongodb+srv://shubhamsingh:ZqIuucMGucAIGAIa@cluster0.3t74x.mon
 app.use('/', route);
 
 
-app.listen(process.env.PORT || 3000, function () {
-    console.log('Express app running on port ' + (process.env.PORT || 3000))
+app.listen(process.env.PORT || 3001, function () {
+    console.log('Express app running on port ' + (process.env.PORT || 3001))
 })

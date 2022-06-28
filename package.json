@@ -1,7 +1,7 @@
 {
-    "name": "radon",
+    "name": "blogsiteproject1",
     "version": "1.0.0",
-    "description": "Backend cohort for Radon(May-Sep)",
+    "description": "Blogging Site Mini Project",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
