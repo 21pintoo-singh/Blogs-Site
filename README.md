@@ -1,8 +1,6 @@
-# Radon
 
-Repository for backend cohort - Radon
 
-## Blogging Site Mini Project Requirement
+## Blogging Site 
 
 ## Phase I
 
